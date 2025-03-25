@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>¡Premio Buybox!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffffff, #f5f5f5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    .logo {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .logo img {
+      width: 200px;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      border-top: 10px solid #d71920;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #000000;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #333333;
+    }
+
+    button {
+      background-color: #009540;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1.2rem;
+    }
+
+    button:hover {
+      background-color: #007a36;
+    }
+
+    .mensaje {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #d71920;
+      display: none;
+    }
+
+    #botonBigbox {
+      display: none;
+      background-color: #d71920;
+    }
+
+    #botonBigbox:hover {
+      background-color: #b31318;
+    }
+
+    .confetti {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="https://www.dac.com.uy/imagenes/logo-tr-color.png" alt="Logo DAC" />
+  </div>
+
+  <div class="card">
+    <h1>¡Celebramos con vos!</h1>
+    <p>Tenemos una sorpresa para ti...</p>
+    <button onclick="mostrarMensaje()">Ver mensaje</button>
+    
+    <div class="mensaje" id="felicitacion">
+      🎉 ¡Felicitaciones! Has ganado el sorteo de premio de Bigbox por haber colaborado para que tu agencia alcance las 100 reviews en Google este mes! 🎉
+    </div>
+
+    <button id="botonBigbox" onclick="irABigbox()">Toca para elegir el premio</button>
+  </div>
+
+  <canvas class="confetti" id="confetti-canvas"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <script>
+    function mostrarMensaje() {
+      document.getElementById('felicitacion').style.display = 'block';
+      document.getElementById('botonBigbox').style.display = 'inline-block';
+
+      const duration = 2 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+      }, 200);
+    }
+
+    function irABigbox() {
+      window.location.href = "https://www.bigbox.com.uy/?srsltid=AfmBOopOkuWORKfCfWyfacJAbiMyywqA5HbVjN8VbV9xJ6M8dQR9xIiw";
+    }
+  </script>
+</body>
+</html>

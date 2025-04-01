@@ -77,11 +77,12 @@
       header: true,
       complete: function(results) {
         participantes = results.data
-          .filter(p => p["Nombre completo"] && p["Sede"])
+          .filter(p => p["NOMBRE"]?.trim() && p["AGENCIA"]?.trim())
           .map(p => ({
-            nombre: p["Nombre completo"].trim(),
-            sede: p["Sede"].trim()
+            nombre: p["NOMBRE"].trim(),
+            agencia: p["AGENCIA"].trim()
           }));
+        console.log("Participantes cargados:", participantes);
       },
       error: function(err) {
         document.getElementById("resultado").textContent = "⚠️ Error al cargar los datos.";
@@ -96,7 +97,7 @@
       }
 
       const ganador = participantes[Math.floor(Math.random() * participantes.length)];
-      document.getElementById("resultado").textContent = `🎊 ¡Ganador: ${ganador.nombre} (${ganador.sede}) 🎊`;
+      document.getElementById("resultado").textContent = `🎊 ¡Ganador: ${ganador.nombre} (${ganador.agencia}) 🎊`;
 
       confetti({
         particleCount: 150,

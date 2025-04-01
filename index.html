@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: #f0f0f0;
+      background: #f5f5f5;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -19,6 +19,7 @@
 
     h1 {
       color: #d71920;
+      font-size: 2rem;
     }
 
     button {
@@ -63,29 +64,30 @@
 
   <canvas id="confetti-canvas"></canvas>
 
+  <!-- PapaParse para leer CSV correctamente -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
     let participantes = [];
 
-    // URL que apunta directamente a la hoja "SORTEO"
     const sheetUrl = "https://docs.google.com/spreadsheets/d/1cudUGWyERgJ4zJ49_tirxbPhyovf1XyWmQdX0A5MGoQ/export?format=csv&gid=1413897544";
 
-    fetch(sheetUrl)
-      .then(res => res.text())
-      .then(data => {
-        const rows = data.split("\n").slice(1); // Saltar encabezado
-        participantes = rows.map(row => {
-          const cols = row.split(",");
-          return {
-            nombre: cols[0]?.trim(),
-            sede: cols[1]?.trim()
-          };
-        }).filter(p => p.nombre && p.sede);
-      })
-      .catch(err => {
-        document.getElementById("resultado").textContent = "⚠️ Error al cargar los datos";
-        console.error("Error al cargar CSV:", err);
-      });
+    Papa.parse(sheetUrl, {
+      download: true,
+      header: true,
+      complete: function(results) {
+        participantes = results.data
+          .filter(p => p["Nombre completo"] && p["Sede"])
+          .map(p => ({
+            nombre: p["Nombre completo"].trim(),
+            sede: p["Sede"].trim()
+          }));
+      },
+      error: function(err) {
+        document.getElementById("resultado").textContent = "⚠️ Error al cargar los datos.";
+        console.error("PapaParse error:", err);
+      }
+    });
 
     function sortear() {
       if (participantes.length === 0) {

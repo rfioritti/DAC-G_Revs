@@ -17,6 +17,15 @@
       padding: 2rem;
     }
 
+    .logo {
+      margin-bottom: 1rem;
+    }
+
+    .logo img {
+      max-width: 180px;
+      height: auto;
+    }
+
     h1 {
       color: #d71920;
       font-size: 2rem;
@@ -57,8 +66,12 @@
 </head>
 <body>
 
-  <h1>🎉 Sorteo de Agencias 🎉</h1>
-  <p>Hacé clic para conocer a la agencia ganadora</p>
+  <div class="logo">
+    <img src="https://www.dac.com.uy/imagenes/logo-tr-color.png" alt="Logo DAC" />
+  </div>
+
+  <h1>🎉 Sorteo de funcionario ganador del concurso Google Reviews 🎉</h1>
+  <p>Hacé clic para conocer al ganador</p>
   <button onclick="sortear()">Sortear</button>
   <div class="resultado" id="resultado"></div>
 

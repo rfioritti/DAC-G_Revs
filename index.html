@@ -3,48 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>¡Premio Bigbox!</title>
+  <title>Sorteo de Agencias</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #ffffff, #f5f5f5);
+      background: #f0f0f0;
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
       min-height: 100vh;
       text-align: center;
-    }
-
-    .logo {
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .logo img {
-      width: 200px;
-    }
-
-    .card {
-      background: white;
       padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      max-width: 500px;
-      border-top: 10px solid #d71920;
     }
 
     h1 {
-      font-size: 2rem;
-      color: #000000;
-      margin-bottom: 0.5rem;
-    }
-
-    p {
-      font-size: 1.1rem;
-      color: #333333;
+      color: #d71920;
     }
 
     button {
@@ -53,88 +27,82 @@
       border: none;
       padding: 1rem 2rem;
       border-radius: 30px;
-      font-size: 1rem;
+      font-size: 1.2rem;
       cursor: pointer;
-      transition: all 0.3s ease;
-      margin-top: 1.2rem;
+      transition: 0.3s ease;
+      margin-top: 1rem;
     }
 
     button:hover {
       background-color: #007a36;
     }
 
-    .mensaje {
+    .resultado {
       margin-top: 2rem;
-      font-size: 1.2rem;
+      font-size: 2rem;
       font-weight: bold;
       color: #d71920;
-      display: none;
     }
 
-    #botonBigbox {
-      display: none;
-      background-color: #d71920;
-    }
-
-    #botonBigbox:hover {
-      background-color: #b31318;
-    }
-
-    .confetti {
+    canvas {
       position: fixed;
       top: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-      
       z-index: 100;
     }
   </style>
 </head>
 <body>
-  <div class="logo">
-    <img src="https://www.dac.com.uy/imagenes/logo-tr-color.png" alt="Logo DAC" />
-  </div>
 
-  <div class="card">
-    <h1>¡Celebramos con vos!</h1>
-    <p>Tenemos una sorpresa para ti...</p>
-    <button onclick="mostrarMensaje()">Ver mensaje</button>
-    
-    <div class="mensaje" id="felicitacion">
-      🎉 ¡Felicitaciones! Has ganado el sorteo de premio de Bigbox por haber colaborado para que tu agencia alcance las 100 reviews en Google este mes! 🎉
-    </div>
+  <h1>🎉 Sorteo de Agencias 🎉</h1>
+  <p>Hacé clic para conocer a la agencia ganadora</p>
+  <button onclick="sortear()">Sortear</button>
+  <div class="resultado" id="resultado"></div>
 
-    <button id="botonBigbox" onclick="irABigbox()">Toca para elegir el premio</button>
-  </div>
-
-  <canvas class="confetti" id="confetti-canvas"></canvas>
+  <canvas id="confetti-canvas"></canvas>
 
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <script>
-    function mostrarMensaje() {
-      document.getElementById('felicitacion').style.display = 'block';
-      document.getElementById('botonBigbox').style.display = 'inline-block';
+    let participantes = [];
 
-      const duration = 2 * 1000;
-      const animationEnd = Date.now() + duration;
-      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 2000 };
+    // URL que apunta directamente a la hoja "SORTEO"
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/1cudUGWyERgJ4zJ49_tirxbPhyovf1XyWmQdX0A5MGoQ/export?format=csv&gid=1413897544";
 
-      const interval = setInterval(function() {
-        const timeLeft = animationEnd - Date.now();
+    fetch(sheetUrl)
+      .then(res => res.text())
+      .then(data => {
+        const rows = data.split("\n").slice(1); // Saltar encabezado
+        participantes = rows.map(row => {
+          const cols = row.split(",");
+          return {
+            nombre: cols[0]?.trim(),
+            sede: cols[1]?.trim()
+          };
+        }).filter(p => p.nombre && p.sede);
+      })
+      .catch(err => {
+        document.getElementById("resultado").textContent = "⚠️ Error al cargar los datos";
+        console.error("Error al cargar CSV:", err);
+      });
 
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
+    function sortear() {
+      if (participantes.length === 0) {
+        alert("Todavía no se cargaron los datos.");
+        return;
+      }
 
-        const particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
-      }, 200);
-    }
+      const ganador = participantes[Math.floor(Math.random() * participantes.length)];
+      document.getElementById("resultado").textContent = `🎊 ¡Ganador: ${ganador.nombre} (${ganador.sede}) 🎊`;
 
-    function irABigbox() {
-      window.location.href = "https://www.bigbox.com.uy/?srsltid=AfmBOopOkuWORKfCfWyfacJAbiMyywqA5HbVjN8VbV9xJ6M8dQR9xIiw";
+      confetti({
+        particleCount: 150,
+        spread: 90,
+        origin: { y: 0.6 }
+      });
     }
   </script>
+
 </body>
 </html>
